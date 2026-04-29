@@ -34,7 +34,7 @@ from rsl_rl.modules import (
     EmpiricalNormalization,
     StudentTeacher,
     StudentTeacherRecurrent,
-    TransformerActorCritic,
+    # TransformerActorCritic,
 )
 from rsl_rl.utils import store_code_state
 
@@ -142,7 +142,7 @@ class OnPolicyRunner:
             | ActorCriticRecurrent
             | StudentTeacher
             | StudentTeacherRecurrent
-            | TransformerActorCritic
+            # | TransformerActorCritic
         ) = policy_class(num_obs, num_privileged_obs, self.env.num_actions, **self.policy_cfg).to(self.device)
 
         # resolve dimension of rnd gated state

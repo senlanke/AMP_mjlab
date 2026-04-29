@@ -81,7 +81,7 @@ python scripts/list_envs.py --keyword AMP
 
 
 ```bash
-python scripts/train.py Unitree-G1-AMP-Flat
+python scripts/train.py Unitree-G1-AMP-Flat --env.scene.num-envs=4096
 ```
 
 

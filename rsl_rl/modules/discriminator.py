@@ -139,7 +139,9 @@ class Discriminator(nn.Module):
             if self.task_reward_lerp > 0:
                 reward = self._lerp_reward(reward, task_reward.unsqueeze(-1))
             self.train()
-        return reward.squeeze(), d
+
+            reward = reward.squeeze(-1)
+        return reward, d
 
     def _lerp_reward(self, disc_r, task_r):
         """
