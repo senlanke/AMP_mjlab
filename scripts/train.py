@@ -1,5 +1,6 @@
 """Script to train RL agent with RSL-RL."""
 
+import _path_setup  # noqa: F401
 import logging
 import os
 import sys

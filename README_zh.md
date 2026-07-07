@@ -30,43 +30,103 @@
 
 这样可以减少策略切换带来的状态不连续问题，得到更一致的行为。
 
-## 环境要求
+## 安装指南
 
-- Linux
-- Python 3.11（建议）
-- 已可用的 MuJoCo / GPU 驱动环境
+### 系统要求
 
-## 快速开始
+- 操作系统：推荐 Ubuntu 22.04
+- GPU：NVIDIA GPU
+- 驱动版本：推荐 550 或更高版本
+- Python：3.11
 
-### 1. 安装仓库
+### 1. 创建虚拟环境
+
+推荐在虚拟环境中运行训练或部署程序。建议使用 Conda 创建和管理虚拟环境。如果系统中已经安装 Conda，可以跳过 1.1。
+
+#### 1.1 下载并安装 Miniconda
+
+```bash
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm ~/miniconda3/miniconda.sh
+```
+
+安装完成后初始化 Conda：
+
+```bash
+~/miniconda3/bin/conda init --all
+source ~/.bashrc
+```
+
+#### 1.2 创建新环境
+
+```bash
+conda create -n mjlab python=3.11
+```
+
+#### 1.3 激活虚拟环境
 
 ```bash
 conda activate mjlab
+```
+
+### 2. 安装项目
+
+#### 2.1 下载项目
+
+```bash
+git clone https://github.com/ccrpRepo/AMP_mjlab.git
 cd AMP_mjlab
+```
+
+#### 2.2 安装系统依赖
+
+```bash
+sudo apt install -y libyaml-cpp-dev libboost-all-dev libeigen3-dev libspdlog-dev libfmt-dev
+```
+
+#### 2.3 安装 Python 依赖
+
+其余 Python 依赖已经写在 `setup.py` 中。在项目根目录执行：
+
+```bash
 python -m pip install -e .
 ```
 
-### 2. 应用 mjlab 补丁（可选）
+### 3. 应用 mjlab 补丁
 
-如果不打这个补丁，则需要在代码中去掉 `history_ordering` 配置。
+默认配置使用 `history_ordering="time"`。除非你从代码中移除 `history_ordering` 配置，否则需要应用该补丁。
 
 补丁作用说明：
 
-- 增加了历史观测的展开方式选项，可选择按时间维(`time`)或按观测项(`term`)展开。
+- 增加历史观测的展开方式选项，可选择按时间维（`time`）或按观测项（`term`）展开。
 - mjlab 默认仅支持按 `term` 展开。
 
 补丁文件：
 
 - `mjlab_patch/mjlab/managers/observation_manager.py`
 
-示例覆盖命令：
+补丁命令：
 
 ```bash
-cp mjlab_patch/mjlab/managers/observation_manager.py \
-	/home/crp/miniconda3/envs/mjlab/lib/python3.11/site-packages/mjlab/managers/observation_manager.py
+python - <<'PY'
+from pathlib import Path
+import shutil
+import mjlab.managers.observation_manager as observation_manager
+
+src = Path("mjlab_patch/mjlab/managers/observation_manager.py").resolve()
+dst = Path(observation_manager.__file__).resolve()
+backup = dst.with_suffix(dst.suffix + ".bak")
+
+if not backup.exists():
+    shutil.copy2(dst, backup)
+shutil.copy2(src, dst)
+print(f"Patched mjlab observation manager: {dst}")
+PY
 ```
 
-### 3. 查看可用任务
+### 4. 查看可用任务
 
 ```bash
 python scripts/list_envs.py --keyword AMP

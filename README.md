@@ -30,25 +30,73 @@ Implementation highlights:
 
 This reduces discontinuities caused by policy switching and yields more consistent behavior.
 
-## Requirements
+## Installation Guide
 
-- Linux
-- Python 3.11 (recommended)
-- Working MuJoCo and GPU driver setup
+### System Requirements
 
-## Quick Start
+- Operating system: Ubuntu 22.04 is recommended
+- GPU: NVIDIA GPU
+- Driver version: 550 or later is recommended
+- Python: 3.11
 
-### 1. Install
+### 1. Create a Virtual Environment
+
+It is recommended to run training and deployment programs in a virtual environment. Conda is recommended for environment management. If Conda is already installed, skip step 1.1.
+
+#### 1.1 Download and Install Miniconda
+
+```bash
+mkdir -p ~/miniconda3
+wget https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -O ~/miniconda3/miniconda.sh
+bash ~/miniconda3/miniconda.sh -b -u -p ~/miniconda3
+rm ~/miniconda3/miniconda.sh
+```
+
+Initialize Conda:
+
+```bash
+~/miniconda3/bin/conda init --all
+source ~/.bashrc
+```
+
+#### 1.2 Create a New Environment
+
+```bash
+conda create -n mjlab python=3.11
+```
+
+#### 1.3 Activate the Environment
 
 ```bash
 conda activate mjlab
+```
+
+### 2. Install the Project
+
+#### 2.1 Clone the Repository
+
+```bash
+git clone https://github.com/ccrpRepo/AMP_mjlab.git
 cd AMP_mjlab
+```
+
+#### 2.2 Install System Dependencies
+
+```bash
+sudo apt install -y libyaml-cpp-dev libboost-all-dev libeigen3-dev libspdlog-dev libfmt-dev
+```
+
+#### 2.3 Install Python Dependencies
+
+All Python dependencies are specified in `setup.py`. Install the project from the repository root:
+
+```bash
 python -m pip install -e .
 ```
 
-### 2. Apply mjlab Patch (Optional)
+### 3. Apply mjlab Patch
 
-If you do not apply this patch, remove `history_ordering` configuration from the code.
+The default configuration uses `history_ordering="time"`. Apply this patch unless you remove the `history_ordering` configuration from the code.
 
 What this patch does:
 
@@ -59,14 +107,26 @@ Patch file:
 
 - `mjlab_patch/mjlab/managers/observation_manager.py`
 
-Example command:
+Patch command:
 
 ```bash
-cp mjlab_patch/mjlab/managers/observation_manager.py \
-  /home/crp/miniconda3/envs/mjlab/lib/python3.11/site-packages/mjlab/managers/observation_manager.py
+python - <<'PY'
+from pathlib import Path
+import shutil
+import mjlab.managers.observation_manager as observation_manager
+
+src = Path("mjlab_patch/mjlab/managers/observation_manager.py").resolve()
+dst = Path(observation_manager.__file__).resolve()
+backup = dst.with_suffix(dst.suffix + ".bak")
+
+if not backup.exists():
+    shutil.copy2(dst, backup)
+shutil.copy2(src, dst)
+print(f"Patched mjlab observation manager: {dst}")
+PY
 ```
 
-### 3. List Available Tasks
+### 4. List Available Tasks
 
 ```bash
 python scripts/list_envs.py --keyword AMP

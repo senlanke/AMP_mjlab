@@ -1,5 +1,6 @@
 """Script to play RL agent with RSL-RL."""
 
+import _path_setup  # noqa: F401
 import os
 import inspect
 import sys

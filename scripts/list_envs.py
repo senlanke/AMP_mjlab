@@ -1,5 +1,6 @@
 """Script to list mjlab environments."""
 
+import _path_setup  # noqa: F401
 import tyro
 from prettytable import PrettyTable
 
