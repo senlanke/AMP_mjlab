@@ -80,13 +80,8 @@ git clone https://github.com/ccrpRepo/AMP_mjlab.git
 cd AMP_mjlab
 ```
 
-#### 2.2 安装系统依赖
 
-```bash
-sudo apt install -y libyaml-cpp-dev libboost-all-dev libeigen3-dev libspdlog-dev libfmt-dev
-```
-
-#### 2.3 安装 Python 依赖
+#### 2.2 安装 Python 依赖
 
 其余 Python 依赖已经写在 `setup.py` 中。在项目根目录执行：
 
@@ -112,6 +107,11 @@ python -m pip install -e .
 ```bash
 cp mjlab_patch/mjlab/managers/observation_manager.py \
   ~/miniconda3/envs/mjlab/lib/python3.11/site-packages/mjlab/managers/observation_manager.py
+```
+
+```bash
+cp mjlab_patch/mjlab/managers/observation_manager.py \
+  /opt/conda/envs/mjlab/lib/python3.11/site-packages/mjlab/managers/observation_manager.py
 ```
 
 ### 4. 查看可用任务
