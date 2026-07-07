@@ -407,4 +407,3 @@ def make_amp_env_cfg() -> ManagerBasedRlEnvCfg:
 
 
 
-

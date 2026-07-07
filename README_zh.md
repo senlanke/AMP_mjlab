@@ -110,20 +110,8 @@ python -m pip install -e .
 补丁命令：
 
 ```bash
-python - <<'PY'
-from pathlib import Path
-import shutil
-import mjlab.managers.observation_manager as observation_manager
-
-src = Path("mjlab_patch/mjlab/managers/observation_manager.py").resolve()
-dst = Path(observation_manager.__file__).resolve()
-backup = dst.with_suffix(dst.suffix + ".bak")
-
-if not backup.exists():
-    shutil.copy2(dst, backup)
-shutil.copy2(src, dst)
-print(f"Patched mjlab observation manager: {dst}")
-PY
+cp mjlab_patch/mjlab/managers/observation_manager.py \
+  ~/miniconda3/envs/mjlab/lib/python3.11/site-packages/mjlab/managers/observation_manager.py
 ```
 
 ### 4. 查看可用任务
